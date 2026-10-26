@@ -83,7 +83,7 @@ export function renderChatHtml(
 
     const avatar = chat.isGroup
         ? null
-        : chat.participants.find(user => user.avatarUrl)?.avatarUrl
+        : messages.find(message => !message.isOwn)?.sender.avatarUrl
     const range = messages.length
         ? `${formatDateTime(messages[0].sentAt)} – ${formatDateTime(messages[messages.length - 1].sentAt)}`
         : ''
