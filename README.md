@@ -103,12 +103,6 @@ bun run typecheck  # tsc -b --noEmit
 bun run lint
 ```
 
-Store screenshots are rendered from fake data, never real chats:
-
-```bash
-bunx vite --config store/screens/vite.config.ts   # open /?scene=hero|chat|popup|export|tile
-```
-
 ## Tech stack
 
 | Layer        | Tools                                                            |
@@ -151,7 +145,7 @@ src/
 └── main.tsx                     Popup entry
 
 public/                          Manifest icons (16/32/48/128)
-store/                           Chrome Web Store assets + screens/ demo renderer
+store/                           Chrome Web Store assets
 ```
 
 ## Privacy
