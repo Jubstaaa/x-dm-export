@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '../theme.css';
+
+:host {
+    all: initial;
+    font-family: var(--font-sans);
+}
