@@ -32,16 +32,15 @@ function createOverlay() {
 
 function handleMessage(message: ContentMessage): Promise<unknown> {
     if (message.type === 'LIST_CHATS') {
-        return loadChatDatabase().then(db => ({
-            chats: db.listChats(),
-            owner: db.owner,
-        }))
+        return loadChatDatabase().then(db => {
+            const chats = db.listChats()
+            db.close()
+            return { chats, owner: db.owner }
+        })
     }
-    return exportChats(
-        message.chatIds,
-        message.includeMedia,
-        broadcastProgress
-    ).then(() => ({ ok: true }))
+    return exportChats(message.chatIds, message.includeMedia, {
+        onProgress: broadcastProgress,
+    }).then(() => ({ ok: true }))
 }
 
 chrome.runtime.onMessage.addListener(

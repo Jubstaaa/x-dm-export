@@ -41,8 +41,15 @@ export interface ChatMediaFile {
     messageId: string
 }
 
+export interface ChatArchive {
+    archive: Uint8Array<ArrayBuffer>
+    name: string
+}
+
 export interface ChatDatabase {
+    close: () => void
     getMessages: (chatId: string) => ChatMessage[]
+    hasMessages: (messageIds: string[]) => boolean
     listChats: () => ChatSummary[]
     owner: ChatUser
 }
@@ -53,5 +60,10 @@ export interface ExportProgress {
 }
 
 export type ExportProgressHandler = (progress: ExportProgress) => void
+
+export interface ExportOptions {
+    requiredMessageIds?: string[]
+    onProgress?: ExportProgressHandler
+}
 
 export type ExportStatus = 'idle' | 'exporting' | 'done' | 'error'

@@ -4,9 +4,11 @@ import { openChatDatabase } from './chat-database'
 import { renderChatHtml, renderChatJson, renderChatText } from './chat-render'
 import { listChatMediaFiles, readChatDatabaseFile } from './chat-storage'
 import type {
+    ChatArchive,
     ChatDatabase,
     ChatMediaRef,
     ChatSummary,
+    ExportOptions,
     ExportProgressHandler,
 } from './chat.types'
 
@@ -46,11 +48,35 @@ function slugify(value: string): string {
     return slug || 'chat'
 }
 
+const X_SAVE_EVENT = 'xchat_database_backup_event'
+const SAVE_WAIT_TIMEOUT_MS = 10_000
+const SAVE_POLL_INTERVAL_MS = 500
+
 const today = () => new Date().toISOString().slice(0, 10)
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export async function loadChatDatabase(): Promise<ChatDatabase> {
     const { bytes, ownerId } = await readChatDatabaseFile()
     return openChatDatabase(bytes, ownerId)
+}
+
+async function loadSavedChatDatabase(
+    messageIds: string[]
+): Promise<ChatDatabase> {
+    const requestedAt = Date.now()
+    window.dispatchEvent(new CustomEvent(X_SAVE_EVENT))
+    for (;;) {
+        const { bytes, modifiedAt, ownerId } = await readChatDatabaseFile()
+        const db = await openChatDatabase(bytes, ownerId)
+        const isSaved =
+            modifiedAt >= requestedAt ||
+            (messageIds.length > 0 && db.hasMessages(messageIds))
+        if (isSaved || Date.now() - requestedAt >= SAVE_WAIT_TIMEOUT_MS) {
+            return db
+        }
+        db.close()
+        await sleep(SAVE_POLL_INTERVAL_MS)
+    }
 }
 
 async function addChatFiles(
@@ -80,12 +106,12 @@ async function addChatFiles(
     files[`${folder}_chat.txt`] = strToU8(renderChatText(messages, media))
 }
 
-export async function exportChats(
+async function buildArchive(
+    db: ChatDatabase,
     chatIds: string[],
     includeMedia: boolean,
     onProgress?: ExportProgressHandler
-): Promise<void> {
-    const db = await loadChatDatabase()
+): Promise<ChatArchive> {
     const chats = db.listChats().filter(chat => chatIds.includes(chat.id))
     if (!chats.length) throw new Error('Chat not found in local database')
 
@@ -99,15 +125,30 @@ export async function exportChats(
         await addChatFiles(files, db, chat, folder, includeMedia)
     }
 
-    const archive = zipSync(files)
     const name = isSingle
         ? `x-chat-${slugify(chats[0].name)}-${today()}.zip`
         : `x-chats-${today()}.zip`
+    return { archive: zipSync(files), name }
+}
+
+export async function exportChats(
+    chatIds: string[],
+    includeMedia: boolean,
+    { requiredMessageIds = [], onProgress }: ExportOptions = {}
+): Promise<void> {
+    const db = await loadSavedChatDatabase(requiredMessageIds)
+    let result: ChatArchive
+    try {
+        result = await buildArchive(db, chatIds, includeMedia, onProgress)
+    } finally {
+        db.close()
+    }
+
     const url = URL.createObjectURL(
-        new Blob([archive], { type: 'application/zip' })
+        new Blob([result.archive], { type: 'application/zip' })
     )
     const link = Object.assign(document.createElement('a'), {
-        download: name,
+        download: result.name,
         href: url,
     })
     document.body.append(link)

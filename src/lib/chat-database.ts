@@ -170,5 +170,22 @@ export async function openChatDatabase(
         }))
     }
 
-    return { getMessages, listChats, owner }
+    const hasMessages = (messageIds: string[]): boolean => {
+        if (!messageIds.length) return true
+        const [row] = queryAll(
+            db,
+            `SELECT COUNT(*) AS count FROM dm_entry
+             WHERE entry_id IN (${messageIds.map(() => '?').join(', ')})`,
+            messageIds
+        )
+        return Number(row?.count) === new Set(messageIds).size
+    }
+
+    return {
+        close: () => db.close(),
+        getMessages,
+        hasMessages,
+        listChats,
+        owner,
+    }
 }

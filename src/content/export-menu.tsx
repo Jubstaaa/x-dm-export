@@ -13,6 +13,7 @@ import type { ExportMenuProps } from './export-menu.types'
 import {
     getButtonSlot,
     getCurrentChatId,
+    getVisibleMessageIds,
     updateHeaderButton,
 } from './x-chat-page'
 
@@ -37,7 +38,9 @@ export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
             if (!chatId) return
             setStatus('exporting')
             try {
-                await exportChats([chatId], includeMedia)
+                await exportChats([chatId], includeMedia, {
+                    requiredMessageIds: getVisibleMessageIds(),
+                })
                 setStatus('done')
             } catch (error) {
                 updateHeaderButton(anchor, { title: getErrorMessage(error) })

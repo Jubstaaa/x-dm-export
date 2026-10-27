@@ -13,6 +13,7 @@ async function getDirectory(
 
 export async function readChatDatabaseFile(): Promise<{
     bytes: Uint8Array
+    modifiedAt: number
     ownerId: string
 }> {
     const backups = await getDirectory(['backups'])
@@ -22,6 +23,7 @@ export async function readChatDatabaseFile(): Promise<{
         const file = await (handle as FileSystemFileHandle).getFile()
         return {
             bytes: new Uint8Array(await file.arrayBuffer()),
+            modifiedAt: file.lastModified,
             ownerId: match[1],
         }
     }

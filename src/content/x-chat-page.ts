@@ -1,6 +1,7 @@
 import type { OnHeaderButton } from './x-chat-page.types'
 
 const BUTTON_MARKER = 'data-x-dm-export'
+const MORE_BUTTON = '[data-testid="dm-conversation-more-button"]'
 const POLL_INTERVAL_MS = 1000
 
 export function getCurrentChatId(): string | null {
@@ -29,30 +30,48 @@ export function updateHeaderButton(
     if (title !== undefined) button.title = title
 }
 
+let chatHost: Element | undefined
+
 function findChatShadowRoot(): ShadowRoot | null {
-    const route = document.querySelector('[data-testid="xchatEmbedRoute"]')
-    if (!route) return null
-    const host = [route, ...route.querySelectorAll('*')].find(
-        element => element.shadowRoot
-    )
-    return host?.shadowRoot ?? null
+    if (!chatHost?.isConnected) {
+        chatHost = [...document.querySelectorAll('main *')].find(element =>
+            element.shadowRoot?.querySelector(MORE_BUTTON)
+        )
+    }
+    return chatHost?.shadowRoot ?? null
 }
 
-function createHeaderButton(template: HTMLButtonElement): HTMLButtonElement {
-    const button = template.cloneNode(true) as HTMLButtonElement
-    button.setAttribute(BUTTON_MARKER, '')
+export function getVisibleMessageIds(): string[] {
+    const messages = findChatShadowRoot()?.querySelectorAll<HTMLElement>(
+        '[data-testid^="message-"]:not([data-testid^="message-text-"])'
+    )
+    return [...(messages ?? [])].map(message =>
+        message.dataset.testid!.slice('message-'.length)
+    )
+}
+
+function createHeaderButton(template: Element): {
+    button: HTMLButtonElement
+    element: Element
+} {
+    const element = template.cloneNode(true) as Element
+    const button =
+        element instanceof HTMLButtonElement
+            ? element
+            : element.querySelector('button')!
+    element.setAttribute(BUTTON_MARKER, '')
     button.removeAttribute('data-testid')
+    button.removeAttribute('aria-haspopup')
     button.title = 'Export chat'
     button.setAttribute('aria-label', 'Export chat')
     getButtonSlot(button).replaceChildren()
-    return button
+    return { button, element }
 }
 
 export function watchChatHeader(onHeaderButton: OnHeaderButton): void {
     setInterval(() => {
-        const moreButton = findChatShadowRoot()?.querySelector(
-            '[data-testid="dm-conversation-more-button"]'
-        )
+        if (!getCurrentChatId()) return
+        const moreButton = findChatShadowRoot()?.querySelector(MORE_BUTTON)
         const moreWrapper = moreButton?.parentElement
         const actions = moreWrapper?.parentElement
         if (
@@ -62,11 +81,10 @@ export function watchChatHeader(onHeaderButton: OnHeaderButton): void {
         ) {
             return
         }
-        const template =
-            actions.querySelector<HTMLButtonElement>(':scope > button') ??
-            (moreButton as HTMLButtonElement)
-        const button = createHeaderButton(template)
-        actions.insertBefore(button, moreWrapper)
+        const { button, element } = createHeaderButton(
+            actions.firstElementChild ?? moreWrapper
+        )
+        actions.insertBefore(element, moreWrapper)
         onHeaderButton(button)
     }, POLL_INTERVAL_MS)
 }
