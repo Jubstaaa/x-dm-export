@@ -9,13 +9,13 @@
 <sub>X moved DMs to encrypted Chat and left no way to save them. DM Export for X reads the chats your browser already decrypted and turns them into files you keep: a readable HTML page, JSON and plain text, with photos and videos.</sub>
 
 <p>
-  <a href="https://github.com/Jubstaaa/x-dm-export/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Jubstaaa/x-dm-export?label=release&color=1d9bf0"></a>
+  <a href="https://chromewebstore.google.com/detail/nlchikgekgmcjmhoikpbcgajohddddfa"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/v/nlchikgekgmcjmhoikpbcgajohddddfa?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=1d9bf0"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-1d9bf0"></a>
   <a href="https://github.com/Jubstaaa/x-dm-export/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/Jubstaaa/x-dm-export?color=1d9bf0"></a>
 </p>
 
 <p>
-  <a href="https://github.com/Jubstaaa/x-dm-export/releases/latest"><img alt="Download for Chrome — it's free" src="https://img.shields.io/badge/Download%20for%20Chrome-it's%20free-1d9bf0?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
+  <a href="https://chromewebstore.google.com/detail/nlchikgekgmcjmhoikpbcgajohddddfa"><img alt="Add to Chrome — it's free" src="https://img.shields.io/badge/Add%20to%20Chrome-it's%20free-1d9bf0?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
 </p>
 
 </div>
@@ -73,6 +73,12 @@ The in-chat button is a clone of X's own call button, so it matches X exactly in
 **Limitation:** an export contains what X has synced to this browser. For a chat's full history, open it on x.com and scroll up to the beginning first.
 
 ## Install
+
+### From the Chrome Web Store
+
+[**Install DM Export for X from the Chrome Web Store →**](https://chromewebstore.google.com/detail/nlchikgekgmcjmhoikpbcgajohddddfa)
+
+One click, no setup. Works on any Chromium-based browser (Chrome, Edge, Brave, Arc).
 
 ### From GitHub releases
 
