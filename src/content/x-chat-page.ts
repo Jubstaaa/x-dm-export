@@ -62,6 +62,9 @@ function createHeaderButton(template: Element): {
     element.setAttribute(BUTTON_MARKER, '')
     button.removeAttribute('data-testid')
     button.removeAttribute('aria-haspopup')
+    button.removeAttribute('aria-expanded')
+    button.removeAttribute('aria-disabled')
+    button.disabled = false
     button.title = 'Export chat'
     button.setAttribute('aria-label', 'Export chat')
     getButtonSlot(button).replaceChildren()
@@ -81,9 +84,7 @@ export function watchChatHeader(onHeaderButton: OnHeaderButton): void {
         ) {
             return
         }
-        const { button, element } = createHeaderButton(
-            actions.firstElementChild ?? moreWrapper
-        )
+        const { button, element } = createHeaderButton(moreWrapper)
         actions.insertBefore(element, moreWrapper)
         onHeaderButton(button)
     }, POLL_INTERVAL_MS)
