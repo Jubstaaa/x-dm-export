@@ -113,7 +113,10 @@ async function buildArchive(
     onProgress?: ExportProgressHandler
 ): Promise<ChatArchive> {
     const chats = db.listChats().filter(chat => chatIds.includes(chat.id))
-    if (!chats.length) throw new Error('Chat not found in local database')
+    if (!chats.length)
+        throw new Error(
+            "This chat is not in X's local backup yet. Open the chat, scroll up through it, wait a few seconds and try again."
+        )
 
     const isSingle = chats.length === 1
     const files: Zippable = {}

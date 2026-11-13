@@ -17,17 +17,20 @@ export async function readChatDatabaseFile(): Promise<{
     ownerId: string
 }> {
     const backups = await getDirectory(['backups'])
+    let latest: { file: File; ownerId: string } | null = null
     for await (const [name, handle] of backups.entries()) {
         const match = name.match(CHAT_DATABASE_FILE)
         if (handle.kind !== 'file' || !match) continue
         const file = await (handle as FileSystemFileHandle).getFile()
-        return {
-            bytes: new Uint8Array(await file.arrayBuffer()),
-            modifiedAt: file.lastModified,
-            ownerId: match[1],
-        }
+        if (!latest || file.lastModified > latest.file.lastModified)
+            latest = { file, ownerId: match[1] }
     }
-    throw new Error('No chat database found')
+    if (!latest) throw new Error('No chat database found')
+    return {
+        bytes: new Uint8Array(await latest.file.arrayBuffer()),
+        modifiedAt: latest.file.lastModified,
+        ownerId: latest.ownerId,
+    }
 }
 
 export async function listChatMediaFiles(
