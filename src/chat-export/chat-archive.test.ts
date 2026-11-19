@@ -37,8 +37,18 @@ async function openFixture() {
                 seq: 1,
                 timestamp: 3,
             },
+            {
+                chatId: '100:400',
+                id: 'c1',
+                sender: '400',
+                seq: 1,
+                timestamp: 4,
+            },
         ],
-        titles: [{ chatId: 'g123456789', title: 'Café Crew!' }],
+        titles: [
+            { chatId: 'g123456789', title: 'Café Crew!' },
+            { chatId: '100:400', title: 'Иван Петров' },
+        ],
         users: [
             { id: OWNER, screenName: 'owner' },
             {
@@ -126,6 +136,35 @@ describe('buildArchive', () => {
             '<attached: media/m1.jpg>'
         )
         expect(listChatMediaFiles).toHaveBeenCalledWith(OWNER, '100:200')
+        db.close()
+    })
+
+    it('transliterates non-Latin chat names instead of dropping them', async () => {
+        const db = await openFixture()
+        const { name } = await buildArchive(db, ['100:400'], false)
+        expect(name).toBe('x-chat-ivan-petrov-2026-11-19.zip')
+        db.close()
+    })
+
+    it('recognises media formats beyond the common image types', async () => {
+        vi.mocked(listChatMediaFiles).mockResolvedValue([
+            {
+                file: file([
+                    0x1a, 0x45, 0xdf, 0xa3, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x1f, 0x42, 0x86, 0x81, 0x01, 0x42, 0x82, 0x84, 0x77,
+                    0x65, 0x62, 0x6d,
+                ]),
+                messageId: 'm1',
+            },
+            { file: file([1, 2, 3, 4]), messageId: 'm2' },
+        ])
+        const db = await openFixture()
+        const files = unzipSync(
+            (await buildArchive(db, ['100:200'], true)).archive
+        )
+        expect(Object.keys(files)).toEqual(
+            expect.arrayContaining(['media/m1.webm', 'media/m2.bin'])
+        )
         db.close()
     })
 

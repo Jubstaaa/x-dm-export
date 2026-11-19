@@ -1,7 +1,8 @@
 import { decode } from 'cbor-x'
 import initSqlJs from 'sql.js'
-import type { Database, SqlValue } from 'sql.js'
+import type { Database, SqlJsStatic, SqlValue } from 'sql.js'
 import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url'
+import * as z from 'zod/mini'
 
 import type {
     ChatDatabase,
@@ -13,12 +14,6 @@ import type {
 
 type Row = Record<string, SqlValue>
 
-interface StoredProfile {
-    name?: string
-    profileImageUrl?: string
-    user?: StoredProfile
-}
-
 function queryAll(db: Database, sql: string, params: SqlValue[] = []): Row[] {
     const statement = db.prepare(sql)
     statement.bind(params)
@@ -28,12 +23,34 @@ function queryAll(db: Database, sql: string, params: SqlValue[] = []): Row[] {
     return rows
 }
 
+// Avatars end up in <img src> in the popup and the exported page, so only X's image CDN is trusted.
+const avatarUrl = z.pipe(
+    z.url({ hostname: /^pbs\.twimg\.com$/, protocol: /^https$/ }),
+    z.transform(url => url.replace('_normal.', '_bigger.'))
+)
+
+const profileFields = z.object({
+    name: z.catch(z.optional(z.string()), undefined),
+    profileImageUrl: z.catch(z.optional(avatarUrl), undefined),
+})
+
+// X stores the profile either flat or wrapped in { user }.
+const storedProfile = z.union([
+    z.pipe(
+        z.object({ user: profileFields }),
+        z.transform(({ user }) => user)
+    ),
+    profileFields,
+])
+
+type StoredProfile = z.infer<typeof storedProfile>
+
 function readProfile(contents: SqlValue): StoredProfile {
     if (!(contents instanceof Uint8Array)) return {}
     try {
-        const decoded = decode(contents) as StoredProfile
-        return decoded.user ?? decoded
+        return storedProfile.safeParse(decode(contents)).data ?? {}
     } catch {
+        // Undecodable CBOR: fall back to the columns X keeps outside the blob.
         return {}
     }
 }
@@ -51,11 +68,7 @@ function loadUsers(db: Database): Map<string, ChatUser> {
             return [
                 id,
                 {
-                    avatarUrl:
-                        profile.profileImageUrl?.replace(
-                            '_normal.',
-                            '_bigger.'
-                        ) ?? null,
+                    avatarUrl: profile.profileImageUrl ?? null,
                     handle,
                     id,
                     name: String(row.nickname || profile.name || handle),
@@ -81,13 +94,14 @@ function loadGroupMembers(db: Database): Map<string, string[]> {
     return members
 }
 
+let sqlJs: Promise<SqlJsStatic> | undefined
+
 export async function openChatDatabase(
     bytes: Uint8Array,
     ownerId: string
 ): Promise<ChatDatabase> {
-    const SQL = await initSqlJs({
-        locateFile: () => chrome.runtime.getURL(wasmUrl),
-    })
+    sqlJs ??= initSqlJs({ locateFile: () => chrome.runtime.getURL(wasmUrl) })
+    const SQL = await sqlJs
     const db = new SQL.Database(bytes)
     const users = loadUsers(db)
     const groupMembers = loadGroupMembers(db)

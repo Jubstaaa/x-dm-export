@@ -26,20 +26,17 @@ export interface ErrorResponse {
 
 export type ContentMessage = ExportChatsMessage | ListChatsMessage
 
-export function sendToTab<TResponse>(
+export async function sendToTab<TResponse>(
     tabId: number,
     message: ContentMessage
 ): Promise<TResponse | ErrorResponse | undefined> {
-    return new Promise(resolve => {
-        chrome.tabs.sendMessage(
-            tabId,
-            message,
-            (response: TResponse | ErrorResponse) => {
-                void chrome.runtime.lastError
-                resolve(response)
-            }
-        )
-    })
+    try {
+        return (await chrome.tabs.sendMessage(tabId, message)) as
+            TResponse | ErrorResponse
+    } catch {
+        // No content script in the tab (not reloaded since install); callers show a reload hint.
+        return undefined
+    }
 }
 
 export function isErrorResponse(response: unknown): response is ErrorResponse {
@@ -50,7 +47,8 @@ export function isErrorResponse(response: unknown): response is ErrorResponse {
 
 export function broadcastProgress(progress: ExportProgress): void {
     const message: ExportProgressMessage = { progress, type: 'EXPORT_PROGRESS' }
-    chrome.runtime.sendMessage(message).catch(() => {})
+    // The popup may already be closed; progress is best-effort.
+    chrome.runtime.sendMessage(message).catch(() => undefined)
 }
 
 export function getErrorMessage(error: unknown): string {
