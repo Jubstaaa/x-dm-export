@@ -106,7 +106,7 @@ async function addChatFiles(
     files[`${folder}_chat.txt`] = strToU8(renderChatText(messages, media))
 }
 
-async function buildArchive(
+export async function buildArchive(
     db: ChatDatabase,
     chatIds: string[],
     includeMedia: boolean,

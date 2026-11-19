@@ -107,6 +107,7 @@ bun run dev        # Vite dev server + HMR (dist/ auto-rebuilds)
 bun run build      # Production build → dist/
 bun run typecheck  # tsc -b --noEmit
 bun run lint
+bun run test       # Vitest: database mapping, renderers, zip layout, chat URL parsing
 ```
 
 ## Tech stack
