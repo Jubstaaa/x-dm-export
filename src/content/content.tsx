@@ -1,6 +1,5 @@
 import { createRoot } from 'react-dom/client'
 
-import { exportChats, loadChatDatabase } from '@/chat-export/chat-archive'
 import {
     broadcastProgress,
     type ContentMessage,
@@ -30,7 +29,10 @@ function createOverlay() {
     return { container, root: createRoot(container) }
 }
 
-function handleMessage(message: ContentMessage): Promise<unknown> {
+// The export engine (sql.js, renderers, zip) loads on first use, not on every x.com page view.
+async function handleMessage(message: ContentMessage): Promise<unknown> {
+    const { exportChats, loadChatDatabase } =
+        await import('@/chat-export/chat-archive')
     if (message.type === 'LIST_CHATS') {
         return loadChatDatabase().then(db => {
             const chats = db.listChats()

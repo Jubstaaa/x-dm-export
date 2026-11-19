@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { createPortal } from 'react-dom'
 
-import { exportChats } from '@/chat-export/chat-archive'
 import type { ExportStatus } from '@/chat-export/chat.types'
 import { getErrorMessage } from '@/chat-export/chrome-messaging'
 import { ExportStatusIcon } from '@/components/export-status-icon'
@@ -42,6 +41,8 @@ export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
             if (!chatId) return
             setStatus('exporting')
             try {
+                const { exportChats } =
+                    await import('@/chat-export/chat-archive')
                 await exportChats([chatId], includeMedia, {
                     requiredMessageIds: getVisibleMessageIds(),
                 })

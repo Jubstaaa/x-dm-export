@@ -185,4 +185,25 @@ describe('openChatDatabase', () => {
         expect(db.hasMessages(['m1', 'missing'])).toBe(false)
         db.close()
     })
+
+    it('ignores avatar URLs that are not X image CDN https URLs', async () => {
+        const db = await openFixture({
+            entries: [
+                { chatId: '100:1', id: 'a', sender: '1', seq: 1, timestamp: 1 },
+                { chatId: '100:2', id: 'b', sender: '2', seq: 1, timestamp: 2 },
+            ],
+            users: [
+                { contents: { profileImageUrl: 42 }, id: '1', screenName: 'n' },
+                {
+                    contents: { profileImageUrl: 'javascript:alert(1)' },
+                    id: '2',
+                    screenName: 'j',
+                },
+            ],
+        })
+        const users = db.listChats().flatMap(chat => chat.participants)
+        expect(users.find(user => user.id === '1')?.avatarUrl).toBeNull()
+        expect(users.find(user => user.id === '2')?.avatarUrl).toBeNull()
+        db.close()
+    })
 })

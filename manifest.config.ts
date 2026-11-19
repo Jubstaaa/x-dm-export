@@ -9,13 +9,21 @@ const icons = {
     '128': 'icon-128.png',
 }
 
-export default defineManifest({
+// The MV3 default also allows http://localhost:* and 'wasm-unsafe-eval' on extension pages.
+// The popup needs neither (sql.js runs in the content script), but Vite's dev server does.
+const EXTENSION_PAGES_CSP =
+    "script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+
+export default defineManifest(({ mode }) => ({
     manifest_version: 3,
     name: 'DM Export for X – Save Your Chats',
     version: pkg.version,
     description:
         'Export your X (Twitter) DMs, including encrypted chats, to HTML, JSON and text. Everything stays on your device.',
     minimum_chrome_version: '116',
+    ...(mode === 'production' && {
+        content_security_policy: { extension_pages: EXTENSION_PAGES_CSP },
+    }),
     permissions: ['activeTab'],
     host_permissions: ['https://x.com/*'],
     icons,
@@ -31,4 +39,4 @@ export default defineManifest({
             run_at: 'document_idle',
         },
     ],
-})
+}))

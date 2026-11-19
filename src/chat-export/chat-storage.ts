@@ -42,10 +42,12 @@ export async function listChatMediaFiles(
         root = await getDirectory([
             `dm-files-${ownerId}`,
             'decrypted-media-v2',
-            chatId.replace(':', '-'),
+            chatId.replaceAll(':', '-'),
         ])
-    } catch {
-        return []
+    } catch (error) {
+        if (error instanceof DOMException && error.name === 'NotFoundError')
+            return []
+        throw error
     }
 
     const media: ChatMediaFile[] = []

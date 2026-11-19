@@ -151,4 +151,32 @@ describe('renderChatHtml', () => {
             '<script>alert(1)</script>'
         )
     })
+
+    it('escapes the avatar URL and media paths inside attributes', () => {
+        const hostileUser = {
+            ...alice,
+            avatarUrl: 'https://pbs.twimg.com/a.jpg" onerror="alert(1)',
+        }
+        const hostile = renderChatHtml(
+            chat,
+            [message({ hasAttachment: true, id: 'x', sender: hostileUser })],
+            new Map([
+                [
+                    'x',
+                    {
+                        mime: 'video/mp4',
+                        path: 'media/x" autoplay onplay="alert(2)',
+                    },
+                ],
+            ])
+        )
+        const doc = new DOMParser().parseFromString(hostile, 'text/html')
+        expect(doc.querySelector('[onerror], [onplay]')).toBeNull()
+        expect(doc.querySelector('header img')?.getAttribute('src')).toBe(
+            hostileUser.avatarUrl
+        )
+        expect(doc.querySelector('video')?.getAttribute('src')).toBe(
+            'media/x" autoplay onplay="alert(2)'
+        )
+    })
 })

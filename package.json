@@ -20,11 +20,14 @@
         "class-variance-authority": "^0.7.1",
         "cn": "^0.5.2",
         "fflate": "^0.8.3",
+        "file-type": "^22.3.0",
         "lucide-react": "^1.72.0",
         "radix-ui": "^1.8.1",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
-        "sql.js": "^1.16.0"
+        "slugify": "^1.6.9",
+        "sql.js": "^1.16.0",
+        "zod": "^4.6.7"
     },
     "devDependencies": {
         "@crxjs/vite-plugin": "^3.0.0",
