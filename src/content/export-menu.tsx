@@ -2,20 +2,24 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { createPortal } from 'react-dom'
 
+import { exportChats } from '@/chat-export/chat-archive'
+import type { ExportStatus } from '@/chat-export/chat.types'
+import { getErrorMessage } from '@/chat-export/chrome-messaging'
 import { ExportStatusIcon } from '@/components/export-status-icon'
 import { Menu, MenuAnchor, MenuContent, MenuItem } from '@/components/ui/menu'
 import { MediaIcon, TextIcon } from '@/components/x-icons'
-import { exportChats } from '@/lib/chat-archive'
-import type { ExportStatus } from '@/lib/chat.types'
-import { getErrorMessage } from '@/lib/chrome-messaging'
 
-import type { ExportMenuProps } from './export-menu.types'
 import {
     getButtonSlot,
     getCurrentChatId,
     getVisibleMessageIds,
     updateHeaderButton,
 } from './x-chat-page'
+
+export interface ExportMenuProps {
+    anchor: HTMLButtonElement
+    portalContainer: HTMLElement
+}
 
 const STATUS_RESET_MS = 2500
 

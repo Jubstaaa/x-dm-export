@@ -1,6 +1,11 @@
 import { Button } from '@/components/ui/button'
 
-import type { EmptyStateProps } from './empty-state.types'
+import type { EmptyStateConfig } from './popup.types'
+
+export interface EmptyStateProps {
+    config: EmptyStateConfig
+    onAction: () => void
+}
 
 export function EmptyState({ config, onAction }: EmptyStateProps) {
     const { actionLabel, icon: Icon, text } = config

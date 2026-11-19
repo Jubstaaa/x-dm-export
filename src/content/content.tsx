@@ -1,11 +1,11 @@
 import { createRoot } from 'react-dom/client'
 
-import { exportChats, loadChatDatabase } from '@/lib/chat-archive'
+import { exportChats, loadChatDatabase } from '@/chat-export/chat-archive'
 import {
     broadcastProgress,
     type ContentMessage,
     getErrorMessage,
-} from '@/lib/chrome-messaging'
+} from '@/chat-export/chrome-messaging'
 
 import styles from './content.css?inline'
 import { ExportMenu } from './export-menu'

@@ -122,34 +122,39 @@ bun run test       # Vitest: database mapping, renderers, zip layout, chat URL p
 
 ## Project structure
 
-Flat per-feature folders. Each feature owns its component, types, and a colocated hooks file when the logic outgrows the component.
+Folders follow the extension's surfaces: the popup, the content script on x.com, and the export engine
+both of them drive. Code lives next to its only user; props types and constants stay in their component.
 
 ```
 src/
+├── chat-export/                 Export engine, used by the content script
+│   ├── chat-storage.ts          OPFS access (database + media)
+│   ├── chat-database.ts         sql.js queries → typed chats and messages
+│   ├── chat-render.ts           HTML, JSON and text renderers
+│   ├── chat-html.css            Styles embedded in the exported chat.html
+│   ├── chat-archive.ts          Zip building and download
+│   ├── chrome-messaging.ts      Typed popup ↔ content messages
+│   └── *.test.ts                Vitest suites (fixture databases built with sql.js)
 ├── content/                     Runs on x.com
 │   ├── content.tsx              Entry: popup message handlers + header button mount
 │   ├── content.css              Tailwind for the shadow-root overlay
 │   ├── export-menu.tsx          In-chat export menu anchored to the cloned X button
 │   └── x-chat-page.ts           Finds X's chat header, current chat id, page theme
 ├── popup/                       Toolbar popup
-│   ├── popup.tsx                JSX wiring
+│   ├── main.tsx                 Popup entry (loaded by index.html)
+│   ├── popup.tsx                Layout and empty states
 │   ├── popup.hooks.ts           useChatExporter: tab IPC, selection, progress
-│   ├── popup.constants.ts       Empty-state copy
+│   ├── popup.types.ts           Popup state shared by its components
 │   ├── chat-row.tsx             X-style chat row with avatars
 │   ├── empty-state.tsx
 │   └── export-footer.tsx        Progress, media switch, export button
-├── lib/
-│   ├── chat-storage.ts          OPFS access (database + media)
-│   ├── chat-database.ts         sql.js queries → typed chats and messages
-│   ├── chat-render.ts           HTML, JSON and text renderers
-│   ├── chat-archive.ts          Zip building and download
-│   └── chrome-messaging.ts      Typed popup ↔ content messages
 ├── components/
 │   ├── x-icons.tsx              X-style icon set
 │   ├── export-status-icon.tsx   Idle / exporting / done / error icon
 │   └── ui/                      shadcn primitives + X-style menu
+├── lib/utils.ts                 shadcn's cn helper (path set in components.json)
 ├── theme.css                    X color tokens (light + dark)
-└── main.tsx                     Popup entry
+└── index.css                    Popup styles
 
 public/                          Manifest icons (16/32/48/128)
 store/                           Chrome Web Store assets

@@ -1,4 +1,4 @@
-import type { OnHeaderButton } from './x-chat-page.types'
+type OnHeaderButton = (button: HTMLButtonElement) => void
 
 const BUTTON_MARKER = 'data-x-dm-export'
 const MORE_BUTTON = '[data-testid="dm-conversation-more-button"]'

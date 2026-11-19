@@ -43,9 +43,10 @@ export default defineConfig([
         },
         rules: {
             'prettier/prettier': 'error',
-            '@typescript-eslint/no-unused-vars': 'off',
             'no-console': ['warn', { allow: ['error'] }],
-            'no-unused-vars': 'error',
+            // The core rule misreads parameter names in TypeScript function types.
+            'no-unused-vars': 'off',
+            '@typescript-eslint/no-unused-vars': 'error',
             '@typescript-eslint/consistent-type-imports': 'error',
             '@typescript-eslint/no-empty-object-type': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
@@ -115,9 +116,5 @@ export default defineConfig([
                 },
             ],
         },
-    },
-    {
-        files: ['**/*.types.ts', '**/*.d.ts'],
-        rules: { 'no-unused-vars': 'off' },
     },
 ])

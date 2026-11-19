@@ -1,11 +1,10 @@
-import {
-    CHAT_HTML_STYLE,
-    MEDIA_OMITTED_LABEL,
-    MISSING_MEDIA_LABEL,
-} from './chat-render.constants'
+import CHAT_HTML_STYLE from './chat-html.css?raw'
 import type { ChatMediaRef, ChatMessage, ChatSummary } from './chat.types'
 
 type MediaByMessage = Map<string, ChatMediaRef>
+
+const MISSING_MEDIA_LABEL = 'Media not available on this device'
+const MEDIA_OMITTED_LABEL = '<Media omitted>'
 
 const HTML_ESCAPES: Record<string, string> = {
     '"': '&quot;',
