@@ -4,6 +4,7 @@ on:
     pull_request:
     push:
         branches: [main]
+    workflow_call:
 
 permissions:
     contents: read
@@ -30,6 +31,7 @@ jobs:
             - run: bun run format:check
             - run: bun run lint
             - run: bun run typecheck
+            - run: bun run test
             - run: bun run audit
             - run: bun run build
             - name: actionlint

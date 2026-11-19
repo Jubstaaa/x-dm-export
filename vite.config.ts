@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import path from 'node:path'
 
 import { crx } from '@crxjs/vite-plugin'
@@ -18,5 +19,9 @@ export default defineConfig({
         port: 5174,
         strictPort: true,
         hmr: { port: 5174 },
+    },
+    test: {
+        include: ['src/**/*.test.{ts,tsx}'],
+        setupFiles: ['./vitest.setup.ts'],
     },
 })
