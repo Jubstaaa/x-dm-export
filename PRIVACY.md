@@ -1,6 +1,6 @@
 # DM Export for X Privacy Policy
 
-**Last updated:** 2026-10-26
+**Last updated:** 2026-11-19
 
 DM Export for X is a Chrome extension that exports your X (Twitter) direct messages to files on your computer. This policy describes what data it handles.
 
@@ -23,7 +23,10 @@ Nothing. It keeps no settings, history or copies of your messages. The exported 
 
 ## Network access
 
-None. The popup shows profile pictures by loading them from X's own image CDN (`pbs.twimg.com`), the same images x.com shows you.
+The extension sends nothing anywhere. Two things load images from X's own image CDN (`pbs.twimg.com`), the same images x.com shows you:
+
+- The popup shows profile pictures of your chats.
+- An exported `chat.html` links to the other person's profile picture, so opening that file while online loads that one image from X. The messages, photos and videos in the export are local files.
 
 ## Permissions
 

@@ -2,7 +2,6 @@ import { ExportStatusIcon } from '@/components/export-status-icon'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Switch } from '@/components/ui/switch'
-import { cn } from '@/lib/utils'
 
 import type { ExportState } from './popup.types'
 
@@ -25,31 +24,31 @@ export function ExportFooter({
 
     return (
         <footer className="space-y-3 px-4 py-3">
-            {exportState.type === 'exporting' && (
-                <div className="space-y-1.5">
-                    <Progress
-                        className="h-1"
-                        value={(exportState.current / exportState.total) * 100}
-                    />
-                    <p className="text-muted-foreground text-xs">
-                        Exporting {exportState.current}/{exportState.total}…
+            <div aria-live="polite" role="status">
+                {exportState.type === 'exporting' && (
+                    <div className="space-y-1.5">
+                        <Progress
+                            aria-label="Export progress"
+                            className="h-1"
+                            value={
+                                (exportState.current / exportState.total) * 100
+                            }
+                        />
+                        <p className="text-muted-foreground text-xs">
+                            Exporting {exportState.current}/{exportState.total}…
+                        </p>
+                    </div>
+                )}
+                {(exportState.type === 'done' ||
+                    exportState.type === 'error') && (
+                    <p className="flex items-center gap-1.5 text-xs">
+                        <ExportStatusIcon status={exportState.type} />
+                        {exportState.type === 'done'
+                            ? `Exported ${exportState.count} chat${exportState.count > 1 ? 's' : ''}. Check your downloads.`
+                            : exportState.message}
                     </p>
-                </div>
-            )}
-            {(exportState.type === 'done' || exportState.type === 'error') && (
-                <p
-                    className={cn(
-                        'flex items-center gap-1.5 text-xs',
-                        exportState.type === 'done'
-                            ? 'text-primary'
-                            : 'text-destructive'
-                    )}>
-                    <ExportStatusIcon status={exportState.type} />
-                    {exportState.type === 'done'
-                        ? `Exported ${exportState.count} chat${exportState.count > 1 ? 's' : ''}. Check your downloads.`
-                        : exportState.message}
-                </p>
-            )}
+                )}
+            </div>
             <div className="flex items-center gap-3">
                 <label className="flex flex-1 cursor-pointer items-center gap-2 text-[13px]">
                     <Switch
