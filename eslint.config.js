@@ -1,6 +1,6 @@
 import js from '@eslint/js'
 import prettierConfig from 'eslint-config-prettier'
-import importPlugin from 'eslint-plugin-import'
+import importPlugin from 'eslint-plugin-import-x'
 import perfectionistPlugin from 'eslint-plugin-perfectionist'
 import prettierPlugin from 'eslint-plugin-prettier'
 import reactPlugin from 'eslint-plugin-react'
@@ -32,10 +32,10 @@ export default defineConfig([
             prettierConfig,
         ],
         plugins: {
-            import: importPlugin,
-            perfectionist: perfectionistPlugin,
-            prettier: prettierPlugin,
-            react: reactPlugin,
+            'import-x': importPlugin,
+            'perfectionist': perfectionistPlugin,
+            'prettier': prettierPlugin,
+            'react': reactPlugin,
         },
         languageOptions: {
             ecmaVersion: 2022,
@@ -49,7 +49,7 @@ export default defineConfig([
             '@typescript-eslint/consistent-type-imports': 'error',
             '@typescript-eslint/no-empty-object-type': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
-            'import/order': [
+            'import-x/order': [
                 'error',
                 {
                     'groups': [
