@@ -43,7 +43,7 @@ Built for anyone who doesn't want years of conversations to live only inside X: 
     - `_chat.txt`: plain text, one line per message as `[date, time] Name: message`
 - **Photos, GIFs and videos** your browser has downloaded, saved next to the chat
 - **Group chats** with participant names and avatars
-- **Zero data collection**: no servers, no accounts, no analytics, no network requests
+- **Zero data collection**: no servers, no accounts, no analytics. The extension sends nothing anywhere; the only requests are profile pictures loaded from X's image CDN
 
 <p align="center">
   <img src="store/screenshot-chat-1280x800.png" alt="Export button next to the call buttons in an X chat, with the With media and Without media menu open" width="900" />
@@ -114,7 +114,7 @@ bun run test       # Vitest: database mapping, renderers, zip layout, chat URL p
 
 | Layer        | Tools                                                            |
 | ------------ | ---------------------------------------------------------------- |
-| Build        | Vite, [@crxjs/vite-plugin](https://crxjs.dev), Bun               |
+| Build        | Vite, [@crxjs/vite-plugin](https://crxjs.dev), Bun, Vitest       |
 | UI           | React 19, TypeScript, Tailwind CSS v4                            |
 | Components   | shadcn/ui (new-york), Radix UI, lucide-react                     |
 | Data         | sql.js (SQLite → WASM), cbor-x, fflate                           |

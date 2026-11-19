@@ -9,7 +9,8 @@
     --card-foreground: #0f1419;
     --popover: #ffffff;
     --popover-foreground: #0f1419;
-    --primary: #1d9bf0;
+    /* X blue darkened to pass 4.5:1 with white button text; focus rings keep the brand blue. */
+    --primary: #0c74b8;
     --primary-foreground: #ffffff;
     --secondary: #eff3f4;
     --secondary-foreground: #0f1419;
