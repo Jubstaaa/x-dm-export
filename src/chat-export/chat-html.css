@@ -1,7 +1,9 @@
 :root {
     --bg: #fff;
     --fg: #0f1419;
-    --own: #0c74b8;
+    --own: #1d9bf0;
+    /* White on X blue is only 3:1; message text needs 4.5:1, so sent bubbles use X's ink. */
+    --own-fg: #0f1419;
     --other: #eff3f4;
     --muted: #536471;
     --line: #eff3f4;
@@ -88,7 +90,7 @@ main {
 }
 .own .bubble {
     background: var(--own);
-    color: #fff;
+    color: var(--own-fg);
     border-bottom-right-radius: 6px;
 }
 .other .bubble {
@@ -112,7 +114,6 @@ main {
 }
 .missing {
     font-style: italic;
-    opacity: 0.75;
 }
 footer {
     text-align: center;

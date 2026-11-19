@@ -88,7 +88,7 @@ export function ChatPage({
             : ''
 
     return (
-        <html>
+        <html lang="en">
             <head>
                 <meta charSet="utf-8" />
                 <meta
