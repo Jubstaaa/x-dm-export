@@ -9,9 +9,10 @@
     --card-foreground: #0f1419;
     --popover: #ffffff;
     --popover-foreground: #0f1419;
-    /* X blue darkened to pass 4.5:1 with white button text; focus rings keep the brand blue. */
-    --primary: #0c74b8;
+    --primary: #1d9bf0;
+    /* White on X blue is 3:1, so primary pills keep their labels bold and at least 18.66px (AA large text). */
     --primary-foreground: #ffffff;
+    --primary-hover: #1a8cd8;
     --secondary: #eff3f4;
     --secondary-foreground: #0f1419;
     --muted: #f7f9f9;
@@ -20,7 +21,8 @@
     --accent-foreground: #0f1419;
     --destructive: #f4212e;
     --border: #eff3f4;
-    --input: #cfd9de;
+    /* Checkbox and switch outlines need 3:1 against the page (WCAG 1.4.11). */
+    --input: #536471;
     --ring: #1d9bf0;
 }
 
@@ -34,11 +36,12 @@
     --secondary: #202327;
     --secondary-foreground: #e7e9ea;
     --muted: #16181c;
-    --muted-foreground: #71767b;
+    /* X's dim-theme grey: #71767b drops below 4.5:1 on the #202327 search field. */
+    --muted-foreground: #8b98a5;
     --accent: #181919;
     --accent-foreground: #e7e9ea;
     --border: #2f3336;
-    --input: #333639;
+    --input: #71767b;
 }
 
 @theme inline {
@@ -57,6 +60,7 @@
     --color-popover-foreground: var(--popover-foreground);
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
+    --color-primary-hover: var(--primary-hover);
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);

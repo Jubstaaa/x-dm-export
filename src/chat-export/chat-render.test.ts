@@ -114,6 +114,10 @@ describe('renderChatHtml', () => {
     const html = renderChatHtml(chat, messages, media)
     const page = new DOMParser().parseFromString(html, 'text/html')
 
+    it('declares the language of its English interface', () => {
+        expect(page.documentElement.lang).toBe('en')
+    })
+
     it('titles the page and header after the chat', () => {
         expect(page.title).toBe('Alice')
         expect(page.querySelector('h1')?.textContent).toBe('Alice')
