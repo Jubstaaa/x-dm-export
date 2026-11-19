@@ -1,6 +1,7 @@
 {
     "name": "x-dm-export",
     "version": "0.1.4",
+    "packageManager": "bun@1.4.4",
     "private": true,
     "type": "module",
     "scripts": {
@@ -9,7 +10,8 @@
         "typecheck": "tsc -b --noEmit",
         "lint": "eslint .",
         "format": "prettier . --write",
-        "format:check": "prettier . --check"
+        "format:check": "prettier . --check",
+        "audit": "bun audit --audit-level=high"
     },
     "dependencies": {
         "cbor-x": "^1.6.8",
