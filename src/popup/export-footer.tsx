@@ -4,7 +4,15 @@ import { Progress } from '@/components/ui/progress'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 
-import type { ExportFooterProps } from './export-footer.types'
+import type { ExportState } from './popup.types'
+
+export interface ExportFooterProps {
+    exportState: ExportState
+    includeMedia: boolean
+    selectedCount: number
+    onExport: () => void
+    onIncludeMediaChange: (includeMedia: boolean) => void
+}
 
 export function ExportFooter({
     exportState,

@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 
-import type { ExportStatus } from '@/lib/chat.types'
+import type { ExportStatus } from '@/chat-export/chat.types'
 
 import { AlertIcon, CheckIcon, DownloadIcon, SpinnerIcon } from './x-icons'
 

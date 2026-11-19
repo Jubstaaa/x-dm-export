@@ -2,11 +2,17 @@ import { memo, useMemo } from 'react'
 
 import { Users } from 'lucide-react'
 
+import type { ChatSummary } from '@/chat-export/chat.types'
+import type { ChatUser } from '@/chat-export/chat.types'
 import { Checkbox } from '@/components/ui/checkbox'
-import type { ChatUser } from '@/lib/chat.types'
 import { cn } from '@/lib/utils'
 
-import type { ChatRowProps } from './chat-row.types'
+export interface ChatRowProps {
+    chat: ChatSummary
+    isSelected: boolean
+    ownerId: string
+    onToggle: (chatId: string) => void
+}
 
 const relativeTime = new Intl.RelativeTimeFormat('en', {
     numeric: 'auto',

@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { MessageSquareOff, RotateCw, Search } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -8,8 +8,29 @@ import { SpinnerIcon } from '@/components/x-icons'
 import { ChatRow } from './chat-row'
 import { EmptyState } from './empty-state'
 import { ExportFooter } from './export-footer'
-import { EMPTY_STATES } from './popup.constants'
 import { useChatExporter } from './popup.hooks'
+import type { EmptyStateConfig, PopupStatus } from './popup.types'
+
+const EMPTY_STATES: Partial<Record<PopupStatus, EmptyStateConfig>> = {
+    'no-database': {
+        action: 'open-x',
+        actionLabel: 'Open X Chat',
+        icon: MessageSquareOff,
+        text: 'No chats found yet. Open Chat on x.com once, wait for it to load, then try again.',
+    },
+    'not-on-x': {
+        action: 'open-x',
+        actionLabel: 'Open X Chat',
+        icon: MessageSquareOff,
+        text: 'Open X in this tab to see your chats.',
+    },
+    'reload-needed': {
+        action: 'reload',
+        actionLabel: 'Reload X',
+        icon: RotateCw,
+        text: 'Reload the X tab once so the extension can connect.',
+    },
+}
 
 export function Popup() {
     const {

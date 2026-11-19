@@ -18,15 +18,13 @@
     "dependencies": {
         "cbor-x": "^1.6.9",
         "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
         "cn": "^0.5.2",
         "fflate": "^0.8.3",
         "lucide-react": "^1.72.0",
         "radix-ui": "^1.8.1",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
-        "sql.js": "^1.16.0",
-        "tailwind-merge": "^3.7.0"
+        "sql.js": "^1.16.0"
     },
     "devDependencies": {
         "@crxjs/vite-plugin": "^3.0.0",

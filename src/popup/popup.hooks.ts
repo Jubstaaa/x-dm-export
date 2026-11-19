@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import type { ChatSummary, ChatUser } from '@/lib/chat.types'
+import type { ChatSummary, ChatUser } from '@/chat-export/chat.types'
 import {
     type ExportProgressMessage,
     isErrorResponse,
     type ListChatsResponse,
     sendToTab,
-} from '@/lib/chrome-messaging'
+} from '@/chat-export/chrome-messaging'
 
 import type { ExportState, PopupStatus } from './popup.types'
 
