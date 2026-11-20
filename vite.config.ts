@@ -21,7 +21,7 @@ export default defineConfig({
         hmr: { port: 5174 },
     },
     test: {
-        include: ['src/**/*.test.{ts,tsx}'],
+        include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
         setupFiles: ['./vitest.setup.ts'],
     },
 })

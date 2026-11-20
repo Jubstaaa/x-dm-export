@@ -23,7 +23,7 @@ const memberGroups = {
 export default defineConfig([
     globalIgnores(['**/dist', '**/node_modules', 'src/components/ui']),
     {
-        files: ['src/**/*.{ts,tsx}'],
+        files: ['src/**/*.{ts,tsx}', 'scripts/**/*.ts'],
         extends: [
             js.configs.recommended,
             tseslint.configs.recommended,
@@ -116,5 +116,10 @@ export default defineConfig([
                 },
             ],
         },
+    },
+    {
+        // Release scripts run in CI, where stdout is the log.
+        files: ['scripts/**/*.ts'],
+        rules: { 'no-console': 'off' },
     },
 ])
