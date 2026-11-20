@@ -158,6 +158,7 @@ src/
 
 public/                          Manifest icons (16/32/48/128)
 store/                           Chrome Web Store assets
+scripts/                         Chrome Web Store upload + publish, run by release.yml
 ```
 
 ## Privacy
