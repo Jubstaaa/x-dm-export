@@ -121,3 +121,30 @@ footer {
     font-size: 12px;
     padding: 24px;
 }
+@media print {
+    :root {
+        --bg: #fff;
+        --fg: #0f1419;
+        --other: #eff3f4;
+        --muted: #536471;
+        --line: #eff3f4;
+    }
+    header {
+        position: static;
+        backdrop-filter: none;
+        background: none;
+    }
+    /* Chrome drops backgrounds by default when printing; keep the bubbles readable as bubbles. */
+    .bubble {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .msg,
+    .bubble img,
+    .bubble video {
+        break-inside: avoid;
+    }
+    .day {
+        break-after: avoid;
+    }
+}

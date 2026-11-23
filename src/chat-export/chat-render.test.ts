@@ -1,4 +1,6 @@
 // @vitest-environment happy-dom
+import { readFileSync } from 'node:fs'
+
 import { describe, expect, it } from 'vitest'
 
 import { renderChatHtml, renderChatJson, renderChatText } from './chat-render'
@@ -182,5 +184,35 @@ describe('renderChatHtml', () => {
         expect(doc.querySelector('video')?.getAttribute('src')).toBe(
             'media/x" autoplay onplay="alert(2)'
         )
+    })
+
+    it('loads every photo and video frame so the chat prints in full', () => {
+        const html = renderChatHtml(
+            chat,
+            [
+                message({ hasAttachment: true, id: 'p' }),
+                message({ hasAttachment: true, id: 'v' }),
+            ],
+            new Map([
+                ['p', { mime: 'image/jpeg', path: 'media/p.jpg' }],
+                ['v', { mime: 'video/mp4', path: 'media/v.mp4' }],
+            ])
+        )
+        const doc = new DOMParser().parseFromString(html, 'text/html')
+        expect(
+            doc.querySelector('main img')?.getAttribute('loading')
+        ).toBeNull()
+        expect(doc.querySelector('video')?.getAttribute('preload')).toBe(
+            'metadata'
+        )
+    })
+
+    it('ships a print stylesheet that keeps text dark and bubbles coloured', () => {
+        const style = readFileSync('src/chat-export/chat-html.css', 'utf8')
+        const print = style.slice(style.indexOf('@media print'))
+        expect(style).toContain('@media print')
+        expect(print).toContain('--fg: #0f1419')
+        expect(print).toContain('print-color-adjust: exact')
+        expect(print).toContain('position: static')
     })
 })
