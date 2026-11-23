@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { createPortal } from 'react-dom'
 
@@ -30,35 +30,41 @@ const MENU_ITEMS = [
 export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [status, setStatus] = useState<ExportStatus>('idle')
+    // Kept after the icon resets so the result is still there when the user hovers later.
+    const [resultTitle, setResultTitle] = useState<string>()
+    const resetTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
     const anchorRef = useMemo(() => ({ current: anchor }), [anchor])
     const iconSlot = useMemo(() => getButtonSlot(anchor), [anchor])
 
-    const handleExport = useCallback(
-        async (includeMedia: boolean) => {
-            const chatId = getCurrentChatId()
-            setIsOpen(false)
-            if (!chatId) return
-            setStatus('exporting')
-            try {
-                const { exportChats } =
-                    await import('@/chat-export/chat-archive')
-                const fileName = await exportChats([chatId], includeMedia, {
-                    requiredMessageIds: getVisibleMessageIds(),
-                })
-                updateHeaderButton(anchor, {
-                    title: `Saved ${fileName} to your Downloads folder`,
-                })
-                setStatus('done')
-            } catch (error) {
-                updateHeaderButton(anchor, { title: getErrorMessage(error) })
-                setStatus('error')
-            } finally {
-                setTimeout(() => setStatus('idle'), STATUS_RESET_MS)
-            }
-        },
-        [anchor]
-    )
+    const handleExport = useCallback(async (includeMedia: boolean) => {
+        const chatId = getCurrentChatId()
+        setIsOpen(false)
+        if (!chatId) return
+        clearTimeout(resetTimer.current)
+        setResultTitle(undefined)
+        setStatus('exporting')
+        try {
+            const { exportChats } = await import('@/chat-export/chat-archive')
+            const fileName = await exportChats([chatId], includeMedia, {
+                requiredMessageIds: getVisibleMessageIds(),
+            })
+            setResultTitle(
+                `Downloaded ${fileName}. Press Ctrl+J (⌘⇧J on Mac) to find it.`
+            )
+            setStatus('done')
+        } catch (error) {
+            setResultTitle(getErrorMessage(error))
+            setStatus('error')
+        } finally {
+            resetTimer.current = setTimeout(
+                () => setStatus('idle'),
+                STATUS_RESET_MS
+            )
+        }
+    }, [])
+
+    useEffect(() => () => clearTimeout(resetTimer.current), [])
 
     useEffect(() => {
         const handleClick = () => setIsOpen(open => !open)
@@ -69,9 +75,9 @@ export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
     useEffect(() => {
         updateHeaderButton(anchor, {
             disabled: status === 'exporting',
-            title: status === 'idle' ? 'Export chat' : undefined,
+            title: resultTitle ?? 'Export chat',
         })
-    }, [anchor, status])
+    }, [anchor, resultTitle, status])
 
     useEffect(() => {
         anchor.setAttribute('aria-expanded', String(isOpen))

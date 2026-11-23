@@ -186,7 +186,7 @@ describe('renderChatHtml', () => {
         )
     })
 
-    it('loads every photo and video frame so the chat prints in full', () => {
+    it('loads photos eagerly and video metadata so the chat prints in full', () => {
         const html = renderChatHtml(
             chat,
             [

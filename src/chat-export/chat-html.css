@@ -139,6 +139,10 @@ footer {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
+    .bubble img {
+        max-height: 90vh;
+        object-fit: contain;
+    }
     .msg,
     .bubble img,
     .bubble video {

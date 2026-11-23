@@ -72,7 +72,7 @@ describe('Popup accessibility', () => {
         )
         await userEvent.click(screen.getByRole('button', { name: /Export/ }))
         expect(screen.getByRole('status').textContent).toContain(
-            'Saved x-chat-friend-2026-11-24.zip to your Downloads folder.'
+            'Downloaded x-chat-friend-2026-11-24.zip.'
         )
     })
 })

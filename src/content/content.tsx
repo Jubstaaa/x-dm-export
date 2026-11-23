@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import {
     broadcastProgress,
     type ContentMessage,
+    type ExportChatsResponse,
     getErrorMessage,
 } from '@/chat-export/chrome-messaging'
 
@@ -42,7 +43,7 @@ async function handleMessage(message: ContentMessage): Promise<unknown> {
     }
     return exportChats(message.chatIds, message.includeMedia, {
         onProgress: broadcastProgress,
-    }).then(fileName => ({ fileName }))
+    }).then(fileName => ({ fileName }) satisfies ExportChatsResponse)
 }
 
 chrome.runtime.onMessage.addListener(

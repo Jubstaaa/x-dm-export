@@ -59,7 +59,7 @@ Built for anyone who doesn't want years of conversations to live only inside X: 
 
 ## Opening your export
 
-The export is a zip file saved to your browser's Downloads folder (press `Ctrl+J`, or `⌘⇧J` on Mac, to see it), named `x-chat-<name>-<date>.zip` for one chat or `x-chats-<date>.zip` for several. Unzip it first, then open `chat.html` in your browser. Opening `chat.html` straight from inside the zip leaves the media behind.
+The export is a zip file saved wherever your browser saves downloads, usually the Downloads folder (press `Ctrl+J`, or `⌘⇧J` on Mac, to see it), named `x-chat-<name>-<date>.zip` for one chat or `x-chats-<date>.zip` for several. Unzip it first, then open `chat.html` in your browser (in a multi-chat export, each chat has its own folder with its own `chat.html`). Opening `chat.html` straight from inside the zip leaves the media behind.
 
 To save a chat as PDF or paper, open `chat.html` and press `Ctrl+P` (`⌘P` on Mac). Every page of the chat prints, with the same bubbles as on screen.
 
