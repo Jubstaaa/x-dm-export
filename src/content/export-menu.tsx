@@ -43,8 +43,11 @@ export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
             try {
                 const { exportChats } =
                     await import('@/chat-export/chat-archive')
-                await exportChats([chatId], includeMedia, {
+                const fileName = await exportChats([chatId], includeMedia, {
                     requiredMessageIds: getVisibleMessageIds(),
+                })
+                updateHeaderButton(anchor, {
+                    title: `Saved ${fileName} to your Downloads folder`,
                 })
                 setStatus('done')
             } catch (error) {

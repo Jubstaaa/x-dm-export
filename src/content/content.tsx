@@ -42,7 +42,7 @@ async function handleMessage(message: ContentMessage): Promise<unknown> {
     }
     return exportChats(message.chatIds, message.includeMedia, {
         onProgress: broadcastProgress,
-    }).then(() => ({ ok: true }))
+    }).then(fileName => ({ fileName }))
 }
 
 chrome.runtime.onMessage.addListener(

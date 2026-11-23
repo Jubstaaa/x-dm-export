@@ -6,7 +6,7 @@ export type PopupStatus =
 export type ExportState =
     | { type: 'idle' }
     | { current: number; total: number; type: 'exporting' }
-    | { count: number; type: 'done' }
+    | { fileName: string; type: 'done' }
     | { message: string; type: 'error' }
 
 export interface EmptyStateConfig {

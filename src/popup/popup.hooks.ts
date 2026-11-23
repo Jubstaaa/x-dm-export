@@ -78,7 +78,7 @@ export function useChatExporter() {
             total: selectedIds.size,
             type: 'exporting',
         })
-        const response = await sendToTab<{ ok: true }>(tabId, {
+        const response = await sendToTab<{ fileName: string }>(tabId, {
             chatIds: [...selectedIds],
             includeMedia,
             type: 'EXPORT_CHATS',
@@ -94,7 +94,7 @@ export function useChatExporter() {
             setExportState({ message: response.error, type: 'error' })
             return
         }
-        setExportState({ count: selectedIds.size, type: 'done' })
+        setExportState({ fileName: response.fileName, type: 'done' })
     }, [includeMedia, selectedIds, tabId])
 
     useEffect(() => {
