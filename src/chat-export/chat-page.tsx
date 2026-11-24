@@ -17,8 +17,8 @@ const formatDay = (timestamp: number) =>
 
 function MediaView({ media }: { media: ChatMediaRef }) {
     if (media.mime.startsWith('video/'))
-        return <video controls src={media.path} />
-    return <img alt="" loading="lazy" src={media.path} />
+        return <video controls preload="metadata" src={media.path} />
+    return <img alt="" src={media.path} />
 }
 
 function MessageView({

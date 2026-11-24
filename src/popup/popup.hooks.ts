@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { ChatSummary, ChatUser } from '@/chat-export/chat.types'
 import {
+    type ExportChatsResponse,
     type ExportProgressMessage,
     isErrorResponse,
     type ListChatsResponse,
@@ -78,7 +79,7 @@ export function useChatExporter() {
             total: selectedIds.size,
             type: 'exporting',
         })
-        const response = await sendToTab<{ ok: true }>(tabId, {
+        const response = await sendToTab<ExportChatsResponse>(tabId, {
             chatIds: [...selectedIds],
             includeMedia,
             type: 'EXPORT_CHATS',
@@ -94,7 +95,7 @@ export function useChatExporter() {
             setExportState({ message: response.error, type: 'error' })
             return
         }
-        setExportState({ count: selectedIds.size, type: 'done' })
+        setExportState({ fileName: response.fileName, type: 'done' })
     }, [includeMedia, selectedIds, tabId])
 
     useEffect(() => {

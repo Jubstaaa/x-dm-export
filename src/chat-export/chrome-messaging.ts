@@ -9,6 +9,10 @@ export interface ListChatsResponse {
     owner: ChatUser
 }
 
+export interface ExportChatsResponse {
+    fileName: string
+}
+
 export interface ExportChatsMessage {
     chatIds: string[]
     includeMedia: boolean

@@ -44,7 +44,7 @@ export function ExportFooter({
                     <p className="flex items-center gap-1.5 text-xs">
                         <ExportStatusIcon status={exportState.type} />
                         {exportState.type === 'done'
-                            ? `Exported ${exportState.count} chat${exportState.count > 1 ? 's' : ''}. Check your downloads.`
+                            ? `Downloaded ${exportState.fileName}. Press Ctrl+J (⌘⇧J on Mac) to find it, unzip it and open chat.html.`
                             : exportState.message}
                     </p>
                 )}

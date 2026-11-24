@@ -57,6 +57,12 @@ Built for anyone who doesn't want years of conversations to live only inside X: 
   <img src="store/screenshot-export-1280x800.png" alt="Exported chat.html open in the browser, showing the conversation as chat bubbles" width="900" />
 </p>
 
+## Opening your export
+
+The export is a zip file saved wherever your browser saves downloads, usually the Downloads folder (press `Ctrl+J`, or `⌘⇧J` on Mac, to see it), named `x-chat-<name>-<date>.zip` for one chat or `x-chats-<date>.zip` for several. Unzip it first, then open `chat.html` in your browser (in a multi-chat export, each chat has its own folder with its own `chat.html`). Opening `chat.html` straight from inside the zip leaves the media behind.
+
+To save a chat as PDF or paper, open `chat.html` and press `Ctrl+P` (`⌘P` on Mac). Every page of the chat prints, with the same bubbles as on screen.
+
 ## How it works
 
 X's encrypted chats are decrypted inside your browser, so tools that read X's network traffic only ever see ciphertext. But X's web app keeps a local SQLite database of your chats in the browser's Origin Private File System:

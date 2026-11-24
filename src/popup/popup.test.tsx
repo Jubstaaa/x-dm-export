@@ -37,7 +37,9 @@ beforeEach(() => {
         tabs: {
             query: async () => [{ id: 7, url: 'https://x.com/i/chat' }],
             sendMessage: async (_tabId: number, message: { type: string }) =>
-                message.type === 'LIST_CHATS' ? listResponse : { ok: true },
+                message.type === 'LIST_CHATS'
+                    ? listResponse
+                    : { fileName: 'x-chat-friend-2026-11-24.zip' },
         },
     })
 })
@@ -70,7 +72,7 @@ describe('Popup accessibility', () => {
         )
         await userEvent.click(screen.getByRole('button', { name: /Export/ }))
         expect(screen.getByRole('status').textContent).toContain(
-            'Exported 1 chat. Check your downloads.'
+            'Downloaded x-chat-friend-2026-11-24.zip.'
         )
     })
 })

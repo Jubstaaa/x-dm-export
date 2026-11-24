@@ -110,7 +110,7 @@ export async function exportChats(
     chatIds: string[],
     includeMedia: boolean,
     { requiredMessageIds = [], onProgress }: ExportOptions = {}
-): Promise<void> {
+): Promise<string> {
     const db = await loadSavedChatDatabase(requiredMessageIds)
     let result: ChatArchive
     try {
@@ -130,4 +130,5 @@ export async function exportChats(
     link.click()
     link.remove()
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
+    return result.name
 }
