@@ -1,37 +1,23 @@
-import { memo, useMemo } from 'react'
-
 import { Users } from 'lucide-react'
+import { memo, useMemo } from 'react'
 
 import type { ChatSummary } from '@/chat-export/chat.types'
 import type { ChatUser } from '@/chat-export/chat.types'
+
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
 export interface ChatRowProps {
     chat: ChatSummary
     isSelected: boolean
-    ownerId: string
     onToggle: (chatId: string) => void
+    ownerId: string
 }
 
 const relativeTime = new Intl.RelativeTimeFormat('en', {
     numeric: 'auto',
     style: 'short',
 })
-
-function formatLastActivity(timestamp: number): string {
-    const days = Math.round((timestamp - Date.now()) / 86_400_000)
-    if (days === 0)
-        return new Date(timestamp).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-        })
-    if (days > -7) return relativeTime.format(days, 'day')
-    return new Date(timestamp).toLocaleDateString([], {
-        day: 'numeric',
-        month: 'short',
-    })
-}
 
 function Avatar({
     className,
@@ -60,11 +46,25 @@ function Avatar({
     )
 }
 
+function formatLastActivity(timestamp: number): string {
+    const days = Math.round((timestamp - Date.now()) / 86_400_000)
+    if (days === 0)
+        return new Date(timestamp).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        })
+    if (days > -7) return relativeTime.format(days, 'day')
+    return new Date(timestamp).toLocaleDateString([], {
+        day: 'numeric',
+        month: 'short',
+    })
+}
+
 export const ChatRow = memo(function ChatRow({
     chat,
     isSelected,
-    ownerId,
     onToggle,
+    ownerId,
 }: ChatRowProps) {
     const others = useMemo(
         () => chat.participants.filter(user => user.id !== ownerId),
@@ -112,7 +112,9 @@ export const ChatRow = memo(function ChatRow({
             </div>
             <Checkbox
                 checked={isSelected}
-                onCheckedChange={() => onToggle(chat.id)}
+                onCheckedChange={() => {
+                    onToggle(chat.id)
+                }}
             />
         </label>
     )

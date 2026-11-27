@@ -1,6 +1,7 @@
+import type { Database, SqlJsStatic, SqlValue } from 'sql.js'
+
 import { decode } from 'cbor-x'
 import initSqlJs from 'sql.js'
-import type { Database, SqlJsStatic, SqlValue } from 'sql.js'
 import wasmUrl from 'sql.js/dist/sql-wasm.wasm?url'
 import * as z from 'zod/mini'
 
@@ -23,7 +24,6 @@ function queryAll(db: Database, sql: string, params: SqlValue[] = []): Row[] {
     return rows
 }
 
-// Avatars end up in <img src> in the popup and the exported page, so only X's image CDN is trusted.
 const avatarUrl = z.pipe(
     z.url({ hostname: /^pbs\.twimg\.com$/, protocol: /^https$/ }),
     z.transform(url => url.replace('_normal.', '_bigger.'))
@@ -34,7 +34,6 @@ const profileFields = z.object({
     profileImageUrl: z.catch(z.optional(avatarUrl), undefined),
 })
 
-// X stores the profile either flat or wrapped in { user }.
 const storedProfile = z.union([
     z.pipe(
         z.object({ user: profileFields }),
@@ -44,39 +43,6 @@ const storedProfile = z.union([
 ])
 
 type StoredProfile = z.infer<typeof storedProfile>
-
-function readProfile(contents: SqlValue): StoredProfile {
-    if (!(contents instanceof Uint8Array)) return {}
-    try {
-        return storedProfile.safeParse(decode(contents)).data ?? {}
-    } catch {
-        // Undecodable CBOR: fall back to the columns X keeps outside the blob.
-        return {}
-    }
-}
-
-function loadUsers(db: Database): Map<string, ChatUser> {
-    const rows = queryAll(
-        db,
-        'SELECT CAST(id AS TEXT) AS id, screen_name, nickname, contents FROM dm_user'
-    )
-    return new Map(
-        rows.map(row => {
-            const id = String(row.id)
-            const profile = readProfile(row.contents)
-            const handle = String(row.screen_name || id)
-            return [
-                id,
-                {
-                    avatarUrl: profile.profileImageUrl ?? null,
-                    handle,
-                    id,
-                    name: String(row.nickname || profile.name || handle),
-                },
-            ]
-        })
-    )
-}
 
 function loadGroupMembers(db: Database): Map<string, string[]> {
     const members = new Map<string, string[]>()
@@ -92,6 +58,38 @@ function loadGroupMembers(db: Database): Map<string, string[]> {
         ])
     }
     return members
+}
+
+function loadUsers(db: Database): Map<string, ChatUser> {
+    const rows = queryAll(
+        db,
+        'SELECT CAST(id AS TEXT) AS id, screen_name, nickname, contents FROM dm_user'
+    )
+    return new Map(
+        rows.map(row => {
+            const id = String(row.id)
+            const profile = readProfile(row.contents ?? null)
+            const handle = String(row.screen_name || id)
+            return [
+                id,
+                {
+                    avatarUrl: profile.profileImageUrl ?? null,
+                    handle,
+                    id,
+                    name: String(row.nickname || profile.name || handle),
+                },
+            ]
+        })
+    )
+}
+
+function readProfile(contents: SqlValue): StoredProfile {
+    if (!(contents instanceof Uint8Array)) return {}
+    try {
+        return storedProfile.safeParse(decode(contents)).data ?? {}
+    } catch {
+        return {}
+    }
 }
 
 let sqlJs: Promise<SqlJsStatic> | undefined
@@ -196,7 +194,9 @@ export async function openChatDatabase(
     }
 
     return {
-        close: () => db.close(),
+        close: () => {
+            db.close()
+        },
         getMessages,
         hasMessages,
         listChats,

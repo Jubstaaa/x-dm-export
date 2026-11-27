@@ -1,7 +1,6 @@
 import { encode } from 'cbor-x'
 import initSqlJs from 'sql.js'
 
-// Only the columns the extension reads; the real X schema has more.
 const SCHEMA = `
 CREATE TABLE dm_user (id INTEGER, screen_name TEXT, nickname TEXT, contents BLOB);
 CREATE TABLE dm_group_participant (conversation_id TEXT, user_id INTEGER, is_current_member INTEGER);
@@ -10,24 +9,6 @@ CREATE TABLE dm_entry (entry_id TEXT, conversation_id TEXT, sequence_number INTE
     entry_type TEXT, sender_id INTEGER, plain_text TEXT, has_attachment INTEGER);
 CREATE TABLE dm_reaction (conv_id TEXT, entry_sequence_number INTEGER, emoji TEXT, added_by_user INTEGER, deleted INTEGER);
 `
-
-export interface FixtureUser {
-    id: string
-    contents?: unknown
-    nickname?: string | null
-    screenName?: string | null
-}
-
-export interface FixtureEntry {
-    id: string
-    attachment?: boolean
-    chatId: string
-    sender: string
-    seq: number
-    text?: string | null
-    timestamp: number
-    type?: string
-}
 
 export interface FixtureData {
     entries: FixtureEntry[]
@@ -39,8 +20,26 @@ export interface FixtureData {
         emoji: string
         seq: number
     }[]
-    titles?: { chatId: string; title: string | null }[]
+    titles?: { chatId: string; title: null | string }[]
     users: FixtureUser[]
+}
+
+export interface FixtureEntry {
+    attachment?: boolean
+    chatId: string
+    id: string
+    sender: string
+    seq: number
+    text?: null | string
+    timestamp: number
+    type?: string
+}
+
+export interface FixtureUser {
+    contents?: unknown
+    id: string
+    nickname?: null | string
+    screenName?: null | string
 }
 
 export async function buildChatDatabaseBytes(

@@ -1,21 +1,14 @@
 {
+    "extends": "@jubstaaa/config/tsconfig/base",
     "compilerOptions": {
-        "target": "ES2022",
-        "lib": ["ES2023"],
-        "module": "ESNext",
-        "skipLibCheck": true,
-        "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
-        "isolatedModules": true,
+        "lib": ["ES2023"],
         "moduleDetection": "force",
         "noEmit": true,
-        "strict": true,
+        "noUncheckedSideEffectImports": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUncheckedSideEffectImports": true,
-        "types": ["node"],
-        "resolveJsonModule": true
+        "types": ["node"]
     },
     "include": [
         "vite.config.ts",

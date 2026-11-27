@@ -1,46 +1,3 @@
-export interface ChatUser {
-    id: string
-    avatarUrl: string | null
-    handle: string
-    name: string
-}
-
-export interface ChatSummary {
-    id: string
-    firstAt: number
-    isGroup: boolean
-    lastAt: number
-    messageCount: number
-    name: string
-    participants: ChatUser[]
-}
-
-export interface ChatReaction {
-    by: string
-    emoji: string
-}
-
-export interface ChatMessage {
-    id: string
-    hasAttachment: boolean
-    isOwn: boolean
-    reactions: ChatReaction[]
-    sender: ChatUser
-    sentAt: number
-    text: string | null
-    type: string
-}
-
-export interface ChatMediaRef {
-    mime: string
-    path: string
-}
-
-export interface ChatMediaFile {
-    file: File
-    messageId: string
-}
-
 export interface ChatArchive {
     archive: Uint8Array<ArrayBuffer>
     name: string
@@ -54,6 +11,54 @@ export interface ChatDatabase {
     owner: ChatUser
 }
 
+export interface ChatMediaFile {
+    file: File
+    messageId: string
+}
+
+export interface ChatMediaRef {
+    mime: string
+    path: string
+}
+
+export interface ChatMessage {
+    hasAttachment: boolean
+    id: string
+    isOwn: boolean
+    reactions: ChatReaction[]
+    sender: ChatUser
+    sentAt: number
+    text: null | string
+    type: string
+}
+
+export interface ChatReaction {
+    by: string
+    emoji: string
+}
+
+export interface ChatSummary {
+    firstAt: number
+    id: string
+    isGroup: boolean
+    lastAt: number
+    messageCount: number
+    name: string
+    participants: ChatUser[]
+}
+
+export interface ChatUser {
+    avatarUrl: null | string
+    handle: string
+    id: string
+    name: string
+}
+
+export interface ExportOptions {
+    onProgress?: ExportProgressHandler
+    requiredMessageIds?: string[]
+}
+
 export interface ExportProgress {
     current: number
     total: number
@@ -61,9 +66,4 @@ export interface ExportProgress {
 
 export type ExportProgressHandler = (progress: ExportProgress) => void
 
-export interface ExportOptions {
-    requiredMessageIds?: string[]
-    onProgress?: ExportProgressHandler
-}
-
-export type ExportStatus = 'idle' | 'exporting' | 'done' | 'error'
+export type ExportStatus = 'done' | 'error' | 'exporting' | 'idle'

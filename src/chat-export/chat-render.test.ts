@@ -1,15 +1,15 @@
 // @vitest-environment happy-dom
 import { readFileSync } from 'node:fs'
-
 import { describe, expect, it } from 'vitest'
 
-import { renderChatHtml, renderChatJson, renderChatText } from './chat-render'
 import type {
     ChatMediaRef,
     ChatMessage,
     ChatSummary,
     ChatUser,
 } from './chat.types'
+
+import { renderChatHtml, renderChatJson, renderChatText } from './chat-render'
 
 const owner: ChatUser = {
     avatarUrl: null,
@@ -92,7 +92,9 @@ describe('renderChatText', () => {
 
 describe('renderChatJson', () => {
     it('serialises messages with ISO dates and media references', () => {
-        const json = JSON.parse(renderChatJson(chat, messages, media))
+        const json = JSON.parse(renderChatJson(chat, messages, media)) as {
+            messages: { media: unknown }[]
+        }
         expect(json).toMatchObject({
             id: '1:2',
             name: 'Alice',
@@ -105,7 +107,7 @@ describe('renderChatJson', () => {
             reactions: [{ by: 'Owner', emoji: '❤️' }],
             sentAt: '2026-01-02T09:05:07.000Z',
         })
-        expect(json.messages[1].media).toEqual({
+        expect(json.messages[1]?.media).toEqual({
             mime: 'image/jpeg',
             path: 'media/m2.jpg',
         })

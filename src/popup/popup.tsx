@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { SpinnerIcon } from '@/components/x-icons'
 
+import type { EmptyStateConfig, PopupStatus } from './popup.types'
+
 import { ChatRow } from './chat-row'
 import { EmptyState } from './empty-state'
 import { ExportFooter } from './export-footer'
 import { useChatExporter } from './popup.hooks'
-import type { EmptyStateConfig, PopupStatus } from './popup.types'
 
 const EMPTY_STATES: Partial<Record<PopupStatus, EmptyStateConfig>> = {
     'no-database': {
@@ -96,11 +97,11 @@ export function Popup() {
                                 <Input
                                     aria-label="Search chats"
                                     className="bg-secondary focus-visible:border-primary focus-visible:bg-background h-10 rounded-full border-transparent pl-10"
+                                    onChange={event => {
+                                        setQuery(event.target.value)
+                                    }}
                                     placeholder="Search chats"
                                     value={query}
-                                    onChange={event =>
-                                        setQuery(event.target.value)
-                                    }
                                 />
                             </div>
                             <div className="text-muted-foreground flex items-center justify-between px-1 text-[13px]">
@@ -122,11 +123,11 @@ export function Popup() {
                         <ScrollArea className="h-[340px] border-y">
                             {filteredChats.map(chat => (
                                 <ChatRow
-                                    key={chat.id}
                                     chat={chat}
                                     isSelected={selectedIds.has(chat.id)}
-                                    ownerId={owner?.id ?? ''}
+                                    key={chat.id}
                                     onToggle={handleToggleChat}
+                                    ownerId={owner?.id ?? ''}
                                 />
                             ))}
                             {!filteredChats.length && (
@@ -139,9 +140,9 @@ export function Popup() {
                         <ExportFooter
                             exportState={exportState}
                             includeMedia={includeMedia}
-                            selectedCount={selectedIds.size}
                             onExport={() => void handleExport()}
                             onIncludeMediaChange={setIncludeMedia}
+                            selectedCount={selectedIds.size}
                         />
                     </>
                 )}

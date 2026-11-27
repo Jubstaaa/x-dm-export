@@ -1,5 +1,6 @@
-import CHAT_HTML_STYLE from './chat-html.css?raw'
 import type { ChatMediaRef, ChatMessage, ChatSummary } from './chat.types'
+
+import CHAT_HTML_STYLE from './chat-html.css?raw'
 
 type MediaByMessage = Map<string, ChatMediaRef>
 
@@ -14,6 +15,84 @@ const formatDay = (timestamp: number) =>
         month: 'long',
         year: 'numeric',
     })
+
+export function ChatPage({
+    chat,
+    exportedAt,
+    media,
+    messages,
+}: {
+    chat: ChatSummary
+    exportedAt: number
+    media: MediaByMessage
+    messages: ChatMessage[]
+}) {
+    const avatar = chat.isGroup
+        ? null
+        : messages.find(message => !message.isOwn)?.sender.avatarUrl
+    const first = messages.at(0)
+    const last = messages.at(-1)
+    const range =
+        first && last
+            ? `${formatDateTime(first.sentAt)} – ${formatDateTime(last.sentAt)}`
+            : ''
+
+    return (
+        <html lang="en">
+            <head>
+                <meta charSet="utf-8" />
+                <meta
+                    content="width=device-width,initial-scale=1"
+                    name="viewport"
+                />
+                <title>{chat.name}</title>
+
+                <style dangerouslySetInnerHTML={{ __html: CHAT_HTML_STYLE }} />
+            </head>
+            <body>
+                <header>
+                    {avatar && <img alt="" src={avatar} />}
+                    <div>
+                        <h1>{chat.name}</h1>
+                        <p>
+                            {messages.length} messages · {range}
+                        </p>
+                    </div>
+                </header>
+                <main>
+                    {groupByDay(messages).map(
+                        ({ day, messages: dayMessages }) => (
+                            <section key={day}>
+                                <div className="day">{day}</div>
+                                {dayMessages.map(message => (
+                                    <MessageView
+                                        key={message.id}
+                                        media={media.get(message.id)}
+                                        message={message}
+                                    />
+                                ))}
+                            </section>
+                        )
+                    )}
+                </main>
+                <footer>
+                    Exported {formatDateTime(exportedAt)} with DM Export for X
+                </footer>
+            </body>
+        </html>
+    )
+}
+
+function groupByDay(messages: ChatMessage[]) {
+    const days: { day: string; messages: ChatMessage[] }[] = []
+    for (const message of messages) {
+        const day = formatDay(message.sentAt)
+        const current = days.at(-1)
+        if (current?.day === day) current.messages.push(message)
+        else days.push({ day, messages: [message] })
+    }
+    return days
+}
 
 function MediaView({ media }: { media: ChatMediaRef }) {
     if (media.mime.startsWith('video/'))
@@ -52,83 +131,5 @@ function MessageView({
                 {message.sender.name} · {formatDateTime(message.sentAt)}
             </div>
         </div>
-    )
-}
-
-function groupByDay(messages: ChatMessage[]) {
-    const days: { day: string; messages: ChatMessage[] }[] = []
-    for (const message of messages) {
-        const day = formatDay(message.sentAt)
-        const current = days.at(-1)
-        if (current?.day === day) current.messages.push(message)
-        else days.push({ day, messages: [message] })
-    }
-    return days
-}
-
-export function ChatPage({
-    chat,
-    exportedAt,
-    media,
-    messages,
-}: {
-    chat: ChatSummary
-    exportedAt: number
-    media: MediaByMessage
-    messages: ChatMessage[]
-}) {
-    const avatar = chat.isGroup
-        ? null
-        : messages.find(message => !message.isOwn)?.sender.avatarUrl
-    const first = messages.at(0)
-    const last = messages.at(-1)
-    const range =
-        first && last
-            ? `${formatDateTime(first.sentAt)} – ${formatDateTime(last.sentAt)}`
-            : ''
-
-    return (
-        <html lang="en">
-            <head>
-                <meta charSet="utf-8" />
-                <meta
-                    content="width=device-width,initial-scale=1"
-                    name="viewport"
-                />
-                <title>{chat.name}</title>
-                {/* Static stylesheet bundled with the extension, no user data. */}
-                <style dangerouslySetInnerHTML={{ __html: CHAT_HTML_STYLE }} />
-            </head>
-            <body>
-                <header>
-                    {avatar && <img alt="" src={avatar} />}
-                    <div>
-                        <h1>{chat.name}</h1>
-                        <p>
-                            {messages.length} messages · {range}
-                        </p>
-                    </div>
-                </header>
-                <main>
-                    {groupByDay(messages).map(
-                        ({ day, messages: dayMessages }) => (
-                            <section key={day}>
-                                <div className="day">{day}</div>
-                                {dayMessages.map(message => (
-                                    <MessageView
-                                        key={message.id}
-                                        media={media.get(message.id)}
-                                        message={message}
-                                    />
-                                ))}
-                            </section>
-                        )
-                    )}
-                </main>
-                <footer>
-                    Exported {formatDateTime(exportedAt)} with DM Export for X
-                </footer>
-            </body>
-        </html>
     )
 }
