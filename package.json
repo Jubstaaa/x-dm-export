@@ -31,7 +31,7 @@
     },
     "devDependencies": {
         "@crxjs/vite-plugin": "^3.0.0",
-        "@jubstaaa/config": "github:Jubstaaa/configs#4c12feb3e74097e5a4beeb1cf92a74adddaddcc4",
+        "@jubstaa/config": "^1.6.0",
         "@tailwindcss/vite": "^4.3.5",
         "@testing-library/dom": "^10.4.2",
         "@testing-library/react": "^16.3.3",
