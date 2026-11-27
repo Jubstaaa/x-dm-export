@@ -1,10 +1,8 @@
-/// <reference types="vitest/config" />
-import path from 'node:path'
-
 import { crx } from '@crxjs/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import path from 'node:path'
+import { defineConfig } from 'vitest/config'
 
 import manifest from './manifest.config.ts'
 
@@ -18,7 +16,7 @@ export default defineConfig({
     server: {
         port: 5174,
         strictPort: true,
-        hmr: { port: 5174 },
+        ws: { port: 5174 },
     },
     test: {
         include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],

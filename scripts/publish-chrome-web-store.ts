@@ -12,9 +12,6 @@ const { accessToken, extensionId, publisherId, zipPath } = readPublishEnv(
     process.env
 )
 
-// The client insists on OAuth refresh-token options, but the release job authenticates through
-// Workload Identity Federation, so every request, including its upload-status polling, uses the
-// short-lived access token instead.
 const store = chromeWebstoreUpload({
     clientId: 'unused-with-access-token',
     clientSecret: undefined,

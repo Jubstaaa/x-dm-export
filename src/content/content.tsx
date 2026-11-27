@@ -11,14 +11,6 @@ import styles from './content.css?inline'
 import { ExportMenu } from './export-menu'
 import { isDarkPage, watchChatHeader } from './x-chat-page'
 
-function registerPropertyRules(): void {
-    const rules = styles.match(/@property[^{]+\{[^}]*\}/g)
-    if (!rules) return
-    const style = document.createElement('style')
-    style.textContent = rules.join('\n')
-    document.head.append(style)
-}
-
 function createOverlay() {
     const host = document.createElement('x-dm-export')
     const shadow = host.attachShadow({ mode: 'open' })
@@ -30,7 +22,6 @@ function createOverlay() {
     return { container, root: createRoot(container) }
 }
 
-// The export engine (sql.js, renderers, zip) loads on first use, not on every x.com page view.
 async function handleMessage(message: ContentMessage): Promise<unknown> {
     const { exportChats, loadChatDatabase } =
         await import('@/chat-export/chat-archive')
@@ -46,11 +37,21 @@ async function handleMessage(message: ContentMessage): Promise<unknown> {
     }).then(fileName => ({ fileName }) satisfies ExportChatsResponse)
 }
 
+function registerPropertyRules(): void {
+    const rules = styles.match(/@property[^{]+\{[^}]*\}/g)
+    if (!rules) return
+    const style = document.createElement('style')
+    style.textContent = rules.join('\n')
+    document.head.append(style)
+}
+
 chrome.runtime.onMessage.addListener(
     (message: ContentMessage, _sender, sendResponse) => {
         handleMessage(message)
             .then(sendResponse)
-            .catch(error => sendResponse({ error: getErrorMessage(error) }))
+            .catch((error: unknown) => {
+                sendResponse({ error: getErrorMessage(error) })
+            })
         return true
     }
 )
@@ -64,8 +65,8 @@ watchChatHeader(button => {
     overlay.container.className = isDarkPage() ? 'dark' : ''
     overlay.root.render(
         <ExportMenu
-            key={mountCount}
             anchor={button}
+            key={mountCount}
             portalContainer={overlay.container}
         />
     )

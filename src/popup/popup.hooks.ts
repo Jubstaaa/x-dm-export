@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { ChatSummary, ChatUser } from '@/chat-export/chat.types'
+
 import {
     type ExportChatsResponse,
     type ExportProgressMessage,
@@ -15,7 +16,7 @@ const X_CHAT_URL = 'https://x.com/i/chat'
 
 export function useChatExporter() {
     const [status, setStatus] = useState<PopupStatus>('loading')
-    const [tabId, setTabId] = useState<number | null>(null)
+    const [tabId, setTabId] = useState<null | number>(null)
     const [owner, setOwner] = useState<ChatUser | null>(null)
     const [chats, setChats] = useState<ChatSummary[]>([])
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -128,12 +129,21 @@ export function useChatExporter() {
     }, [])
 
     useEffect(() => {
-        const handleProgress = (message: ExportProgressMessage) => {
-            if (message.type !== 'EXPORT_PROGRESS') return
-            setExportState({ ...message.progress, type: 'exporting' })
+        const handleProgress = (message: unknown) => {
+            if (
+                typeof message !== 'object' ||
+                message === null ||
+                !('type' in message) ||
+                message.type !== 'EXPORT_PROGRESS'
+            )
+                return
+            const { progress } = message as ExportProgressMessage
+            setExportState({ ...progress, type: 'exporting' })
         }
         chrome.runtime.onMessage.addListener(handleProgress)
-        return () => chrome.runtime.onMessage.removeListener(handleProgress)
+        return () => {
+            chrome.runtime.onMessage.removeListener(handleProgress)
+        }
     }, [])
 
     return {

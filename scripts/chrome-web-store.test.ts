@@ -1,4 +1,5 @@
 import type { ItemResource, PublishResponse } from 'chrome-webstore-upload'
+
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -9,6 +10,10 @@ import {
 
 const ITEM_NAME = 'publishers/publisher/items/extension'
 
+function publish(state: string): PublishResponse {
+    return { itemId: 'extension', name: ITEM_NAME, state }
+}
+
 function upload(uploadState: ItemResource['uploadState']): ItemResource {
     return {
         crxVersion: '1.2.3',
@@ -16,10 +21,6 @@ function upload(uploadState: ItemResource['uploadState']): ItemResource {
         name: ITEM_NAME,
         uploadState,
     }
-}
-
-function publish(state: string): PublishResponse {
-    return { itemId: 'extension', name: ITEM_NAME, state }
 }
 
 describe('readPublishEnv', () => {
@@ -52,7 +53,9 @@ describe('readPublishEnv', () => {
 
 describe('assertUploadSucceeded', () => {
     it('accepts a succeeded upload', () => {
-        expect(() => assertUploadSucceeded(upload('SUCCEEDED'))).not.toThrow()
+        expect(() => {
+            assertUploadSucceeded(upload('SUCCEEDED'))
+        }).not.toThrow()
     })
 
     it.each([
@@ -61,7 +64,9 @@ describe('assertUploadSucceeded', () => {
         'NOT_FOUND',
         'UPLOAD_STATE_UNSPECIFIED',
     ] as const)('rejects an upload in state %s', state => {
-        expect(() => assertUploadSucceeded(upload(state))).toThrow(
+        expect(() => {
+            assertUploadSucceeded(upload(state))
+        }).toThrow(
             `Chrome Web Store upload of ${ITEM_NAME} ended in state ${state}`
         )
     })
@@ -71,7 +76,9 @@ describe('assertPublishAccepted', () => {
     it.each(['PENDING_REVIEW', 'PUBLISHED', 'PUBLISHED_TO_TESTERS', 'STAGED'])(
         'accepts state %s',
         state => {
-            expect(() => assertPublishAccepted(publish(state))).not.toThrow()
+            expect(() => {
+                assertPublishAccepted(publish(state))
+            }).not.toThrow()
         }
     )
 
@@ -81,7 +88,9 @@ describe('assertPublishAccepted', () => {
         'ITEM_STATE_UNSPECIFIED',
         'SOMETHING_NEW',
     ])('rejects state %s', state => {
-        expect(() => assertPublishAccepted(publish(state))).toThrow(
+        expect(() => {
+            assertPublishAccepted(publish(state))
+        }).toThrow(
             `Chrome Web Store publish of ${ITEM_NAME} ended in state ${state}`
         )
     })

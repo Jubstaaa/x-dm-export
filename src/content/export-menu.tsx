@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-
 import { createPortal } from 'react-dom'
 
 import type { ExportStatus } from '@/chat-export/chat.types'
+
 import { getErrorMessage } from '@/chat-export/chrome-messaging'
 import { ExportStatusIcon } from '@/components/export-status-icon'
 import { Menu, MenuAnchor, MenuContent, MenuItem } from '@/components/ui/menu'
@@ -30,7 +30,7 @@ const MENU_ITEMS = [
 export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [status, setStatus] = useState<ExportStatus>('idle')
-    // Kept after the icon resets so the result is still there when the user hovers later.
+
     const [resultTitle, setResultTitle] = useState<string>()
     const resetTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
 
@@ -57,19 +57,27 @@ export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
             setResultTitle(getErrorMessage(error))
             setStatus('error')
         } finally {
-            resetTimer.current = setTimeout(
-                () => setStatus('idle'),
-                STATUS_RESET_MS
-            )
+            resetTimer.current = setTimeout(() => {
+                setStatus('idle')
+            }, STATUS_RESET_MS)
         }
     }, [])
 
-    useEffect(() => () => clearTimeout(resetTimer.current), [])
+    useEffect(
+        () => () => {
+            clearTimeout(resetTimer.current)
+        },
+        []
+    )
 
     useEffect(() => {
-        const handleClick = () => setIsOpen(open => !open)
+        const handleClick = () => {
+            setIsOpen(open => !open)
+        }
         anchor.addEventListener('click', handleClick)
-        return () => anchor.removeEventListener('click', handleClick)
+        return () => {
+            anchor.removeEventListener('click', handleClick)
+        }
     }, [anchor])
 
     useEffect(() => {
@@ -86,7 +94,7 @@ export function ExportMenu({ anchor, portalContainer }: ExportMenuProps) {
     return (
         <>
             {createPortal(<ExportStatusIcon status={status} />, iconSlot)}
-            <Menu open={isOpen} onOpenChange={setIsOpen}>
+            <Menu onOpenChange={setIsOpen} open={isOpen}>
                 <MenuAnchor virtualRef={anchorRef} />
                 <MenuContent
                     container={portalContainer}

@@ -132,7 +132,7 @@ describe('buildArchive', () => {
         expect(Object.keys(files)).toEqual(
             expect.arrayContaining(['media/m1.jpg', 'media/m2.mp4'])
         )
-        expect(strFromU8(files['_chat.txt']!)).toContain(
+        expect(strFromU8(files['_chat.txt'] ?? new Uint8Array())).toContain(
             '<attached: media/m1.jpg>'
         )
         expect(listChatMediaFiles).toHaveBeenCalledWith(OWNER, '100:200')
