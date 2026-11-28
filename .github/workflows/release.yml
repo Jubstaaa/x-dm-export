@@ -9,7 +9,6 @@ permissions:
     contents: read
 
 jobs:
-    # A tag only becomes a release after the same gate every PR passes.
     check:
         uses: ./.github/workflows/ci.yml
 
